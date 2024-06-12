@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express());
 
 // application route
-app.use("/api/v1");
+// app.use("/api/v1");
 
 // route
 app.get("/", (req, res) => {

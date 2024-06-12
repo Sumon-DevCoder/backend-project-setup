@@ -10,7 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 app.use((0, cors_1.default)());
 app.use((0, express_1.default)());
 // application route
-app.use("/api/v1");
+// app.use("/api/v1");
 // route
 app.get("/", (req, res) => {
     res.send("backend server is running...");
