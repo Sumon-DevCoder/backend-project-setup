@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-
+import validator from "validator";
 import {
   TGuardian,
   TLocalGuardian,
@@ -7,7 +7,7 @@ import {
   TUserName,
 } from "./student.interface";
 
-import validator from "validator";
+
 
 const UserNameSchema = new Schema<TUserName>({
   firstName: {
