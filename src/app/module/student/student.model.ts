@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, model } from "mongoose";
 import validator from "validator";
 import {
   TGuardian,
@@ -6,8 +6,6 @@ import {
   TStudent,
   TUserName,
 } from "./student.interface";
-
-
 
 const UserNameSchema = new Schema<TUserName>({
   firstName: {
@@ -100,3 +98,5 @@ const StudentSchema = new Schema<TStudent>(
 StudentSchema.virtual("fullName").get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
+
+export const Student = model<TStudent>("Student", StudentSchema);
