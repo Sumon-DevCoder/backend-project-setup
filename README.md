@@ -4,42 +4,25 @@ This project is a Node.js backend application set up with TypeScript, Express, M
 
 ## Project Structure
 
+```
+
 ├── src
-│ ├── app
-│ │ ├── config
-│ │ │ ├── db.ts
-│ │ │ └── config.ts
-│ │ ├── middlewares
-│ │ │ └── authMiddleware.ts
-│ │ ├── modules
-│ │ │ ├── student
-│ │ │ │ ├── controllers
-│ │ │ │ │ └── studentController.ts
-│ │ │ │ ├── models
-│ │ │ │ │ └── studentModel.ts
-│ │ │ │ ├── routes
-│ │ │ │ │ └── studentRoutes.ts
-│ │ │ │ ├── services
-│ │ │ │ │ └── studentService.ts
-│ │ │ ├── user
-│ │ │ │ ├── controllers
-│ │ │ │ │ └── userController.ts
-│ │ │ │ ├── models
-│ │ │ │ │ └── userModel.ts
-│ │ │ │ ├── routes
-│ │ │ │ │ └── userRoutes.ts
-│ │ │ │ ├── services
-│ │ │ │ │ └── userService.ts
-│ │ ├── routes
-│ │ │ └── index.ts
-│ │ ├── utils
-│ ├── app.ts
-│ ├── server.ts
+│   ├── app
+│   │   ├── config
+│   │   ├── middlewares
+│   │   ├── module
+│   │   ├── routes
+│   │   ├── utils
+│   ├── app.ts
+│   ├── server.ts
 ├── .env
 ├── .gitignore
 ├── package.json
 ├── tsconfig.json
 └── README.md
+
+```
+
 
 ## Setup Instructions
 
