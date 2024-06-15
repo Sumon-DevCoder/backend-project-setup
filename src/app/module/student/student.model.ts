@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, model } from "mongoose";
 import validator from "validator";
 import {
+  StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
@@ -44,7 +45,7 @@ const LocalGuardianSchema = new Schema<TLocalGuardian>({
   address: { type: String, required: true },
 });
 
-const StudentSchema = new Schema<TStudent>(
+const StudentSchema = new Schema<TStudent, StudentModel>(
   {
     id: { type: String, required: true, unique: true },
     user: {
@@ -80,8 +81,14 @@ const StudentSchema = new Schema<TStudent>(
     admissionSemester: {
       type: Schema.Types.ObjectId,
       required: [true, "admission Semester id is required"],
-      ref: "AcademicSemester",
+      ref: "AcademicSemester", // reference
       unique: true,
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      required: [true, "academic Department id is required"],
+      unique: true,
+      ref: "AcademicDepartment", // reference
     },
     isDeleted: { type: Boolean, required: true, default: false },
     isActive: { type: String, enum: ["active", "blocked"], required: true },
@@ -98,5 +105,17 @@ const StudentSchema = new Schema<TStudent>(
 StudentSchema.virtual("fullName").get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
+
+// create custom instance method
+// StudentSchema.methods.isUserExist = async function (id: string) {
+//   const existingUser = await Student.findOne({ id });
+//   return existingUser;
+// };
+
+// create custom static method
+StudentSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await Student.findOne({ id });
+  return existingUser;
+};
 
 export const Student = model<TStudent>("Student", StudentSchema);

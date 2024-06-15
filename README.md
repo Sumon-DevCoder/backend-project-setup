@@ -9,6 +9,7 @@ This project is a Node.js backend application set up with TypeScript, Express, M
 ├── src
 │   ├── app
 │   │   ├── config
+│   │   ├── error
 │   │   ├── middlewares
 │   │   ├── module
 │   │   ├── routes
@@ -22,7 +23,6 @@ This project is a Node.js backend application set up with TypeScript, Express, M
 └── README.md
 
 ```
-
 
 ## Setup Instructions
 

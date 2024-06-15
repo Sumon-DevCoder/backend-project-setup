@@ -60,6 +60,7 @@ const createStudentValidationSchema = z.object({
     localGuardian: localGuardianValidationSchema,
     profileImage: z.string(),
     admissionSemester: z.string().min(1), // ObjectId reference to an AcademicSemester document
+    academicDepartment: z.string(), // ObjectId reference to an academicDepartment document
     isDeleted: z.boolean().default(false),
     isActive: z.enum(["active", "blocked"], {
       message: "Status must be active or blocked",
@@ -95,6 +96,7 @@ const updateStudentValidationSchema = z.object({
     localGuardian: localGuardianValidationSchema.partial(),
     profileImage: z.string().optional(),
     admissionSemester: z.string().min(1).optional(), // ObjectId reference to an AcademicSemester document
+    academicDepartment: z.string().optional(), // ObjectId reference to an academicDepartment document
     isDeleted: z.boolean().default(false).optional(),
     isActive: z
       .enum(["active", "blocked"], {
