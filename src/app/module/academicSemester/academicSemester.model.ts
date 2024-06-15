@@ -1,52 +1,57 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { Schema, model } from "mongoose";
+import { TAcademicSemester } from "./academicSemester.interface";
+import httpStatus from "http-status";
+import {
+  AcademicSemesterCode,
+  AcademicSemesterName,
+  Months,
+} from "./academicSemester.constant";
+import AppError from "../../error/AppError";
 
-// Mongoose schema
-const AcademicSemesterSchema = new Schema({
-  name: { type: String, enum: ["Autumn", "Summer", "Fall"], required: true },
-  year: { type: String, required: true },
-  code: { type: String, enum: ["01", "02", "03"], required: true },
-  startMonth: {
-    type: String,
-    enum: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ],
-    required: true,
+const AcademicSemesterSchema = new Schema<TAcademicSemester>(
+  {
+    name: {
+      type: String,
+      enum: AcademicSemesterName,
+      required: true,
+    },
+    code: {
+      type: String,
+      enum: AcademicSemesterCode,
+      required: true,
+    },
+    year: {
+      type: String,
+      required: true,
+    },
+    startMonth: {
+      type: String,
+      enum: Months,
+      required: true,
+    },
+    endMonth: {
+      type: String,
+      enum: Months,
+      required: true,
+    },
   },
-  endMonth: {
-    type: String,
-    enum: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ],
-    required: true,
-  },
+  { timestamps: true }
+);
+
+// isSemesterExists for checking
+AcademicSemesterSchema.pre("save", async function (next) {
+  const isSemesterExists = await academicSemesterModel.findOne({
+    year: this.year,
+    name: this.name,
+  });
+
+  if (isSemesterExists) {
+    throw new AppError(httpStatus.CONFLICT, "Semester is already exists !");
+  }
+  next();
 });
 
-// Define and export Mongoose model
-const AcademicSemesterModel = mongoose.model<Document>(
+export const academicSemesterModel = model<TAcademicSemester>(
   "AcademicSemester",
   AcademicSemesterSchema
 );
-
-export default AcademicSemesterModel;

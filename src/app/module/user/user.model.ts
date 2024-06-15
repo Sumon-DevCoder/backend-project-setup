@@ -2,6 +2,8 @@ import mongoose, { Schema } from "mongoose";
 import { TUser } from "./user.interface";
 import bcrypt from "bcrypt";
 import config from "../../config";
+import AppError from "../../error/AppError";
+import httpStatus from "http-status";
 
 // Define the Mongoose schema
 const userSchema = new Schema<TUser>(
@@ -46,6 +48,19 @@ userSchema.pre("find", function (next) {
 // query middleware --> using pipeline
 userSchema.pre("aggregate", function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+
+  next();
+});
+
+// in delete time existingUser checking
+userSchema.pre("findOneAndUpdate", async function (next) {
+  const query = this.getQuery();
+
+  const existingUser = await User.findOne(query);
+
+  if (!existingUser) {
+    throw new AppError(httpStatus.NOT_FOUND, "User does not exists!");
+  }
 
   next();
 });

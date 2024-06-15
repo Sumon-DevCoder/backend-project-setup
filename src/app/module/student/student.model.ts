@@ -7,6 +7,8 @@ import {
   TStudent,
   TUserName,
 } from "./student.interface";
+import AppError from "../../error/AppError";
+import httpStatus from "http-status";
 
 const UserNameSchema = new Schema<TUserName>({
   firstName: {
@@ -117,5 +119,18 @@ StudentSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Student.findOne({ id });
   return existingUser;
 };
+
+// in delete time existingStudent checking
+StudentSchema.pre("findOneAndUpdate", async function (next) {
+  const query = this.getQuery();
+
+  const existingStudent = await Student.findOne(query);
+
+  if (!existingStudent) {
+    throw new AppError(httpStatus.NOT_FOUND, "Student does not exists!");
+  }
+
+  next();
+});
 
 export const Student = model<TStudent>("Student", StudentSchema);
