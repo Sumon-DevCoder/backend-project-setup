@@ -39,6 +39,8 @@ exports.User = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../config"));
+const AppError_1 = __importDefault(require("../../error/AppError"));
+const http_status_1 = __importDefault(require("http-status"));
 // Define the Mongoose schema
 const userSchema = new mongoose_1.Schema({
     id: { type: String, required: true, unique: true },
@@ -77,6 +79,17 @@ userSchema.pre("find", function (next) {
 userSchema.pre("aggregate", function (next) {
     this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
     next();
+});
+// in delete time existingUser checking
+userSchema.pre("findOneAndUpdate", function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const query = this.getQuery();
+        const existingUser = yield exports.User.findOne(query);
+        if (!existingUser) {
+            throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User does not exists!");
+        }
+        next();
+    });
 });
 // Create the Mongoose model
 exports.User = mongoose_1.default.model("User", userSchema);

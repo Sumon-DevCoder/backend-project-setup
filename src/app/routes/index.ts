@@ -4,7 +4,7 @@ const router = Router();
 
 const moduleRoutes = [
   {
-    path: "/academic-semesters",
+    path: "/academic-semesters", 
     route: AcademicSemesterRoutes,
   },
   //   {

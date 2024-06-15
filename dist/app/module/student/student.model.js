@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Student = void 0;
 const mongoose_1 = require("mongoose");
 const validator_1 = __importDefault(require("validator"));
+const AppError_1 = __importDefault(require("../../error/AppError"));
+const http_status_1 = __importDefault(require("http-status"));
 const UserNameSchema = new mongoose_1.Schema({
     firstName: {
         type: String,
@@ -117,4 +119,15 @@ StudentSchema.statics.isUserExists = function (id) {
         return existingUser;
     });
 };
+// in delete time existingStudent checking
+StudentSchema.pre("findOneAndUpdate", function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const query = this.getQuery();
+        const existingStudent = yield exports.Student.findOne(query);
+        if (!existingStudent) {
+            throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Student does not exists!");
+        }
+        next();
+    });
+});
 exports.Student = (0, mongoose_1.model)("Student", StudentSchema);

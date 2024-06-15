@@ -1,71 +1,43 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importStar(require("mongoose"));
-// Mongoose schema
+exports.academicSemesterModel = void 0;
+const mongoose_1 = require("mongoose");
+const academicSemester_constant_1 = require("./academicSemester.constant");
 const AcademicSemesterSchema = new mongoose_1.Schema({
-    name: { type: String, enum: ["Autumn", "Summer", "Fall"], required: true },
-    year: { type: String, required: true },
-    code: { type: String, enum: ["01", "02", "03"], required: true },
+    name: {
+        type: String,
+        enum: academicSemester_constant_1.AcademicSemesterName,
+        required: true,
+    },
+    code: {
+        type: String,
+        enum: academicSemester_constant_1.AcademicSemesterCode,
+        required: true,
+    },
+    year: {
+        type: String,
+        required: true,
+    },
     startMonth: {
         type: String,
-        enum: [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-        ],
+        enum: academicSemester_constant_1.Months,
         required: true,
     },
     endMonth: {
         type: String,
-        enum: [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-        ],
+        enum: academicSemester_constant_1.Months,
         required: true,
     },
-});
-// Define and export Mongoose model
-const AcademicSemesterModel = mongoose_1.default.model("AcademicSemester", AcademicSemesterSchema);
-exports.default = AcademicSemesterModel;
+}, { timestamps: true });
+// isSemesterExists for checking
+// AcademicSemesterSchema.pre("save", async function (next) {
+//   const isSemesterExists = await academicSemesterModel.findOne({
+//     year: this.year,
+//     name: this.name,
+//   });
+//   if (isSemesterExists) {
+//     throw new AppError(httpStatus.CONFLICT, "Semester is already exists !");
+//   }
+//   next();
+// });
+exports.academicSemesterModel = (0, mongoose_1.model)("AcademicSemester", AcademicSemesterSchema);
