@@ -25,4 +25,6 @@ router.put(
   AcademicSemesterControllers.updateSingleAcademicSemester
 );
 
+
+
 export const AcademicSemesterRoutes = router;

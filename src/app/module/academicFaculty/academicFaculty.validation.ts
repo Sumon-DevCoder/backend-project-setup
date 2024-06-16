@@ -12,7 +12,7 @@ const createAcademicFacultyValidationSchema = z.object({
 });
 
 // update Student Zod Schema
-const UpdateAcademicFacultyValidationSchema = z.object({
+const updateAcademicFacultyValidationSchema = z.object({
   body: z.object({
     name: z.string().min(1, "name is required").optional(),
   }),
@@ -20,5 +20,5 @@ const UpdateAcademicFacultyValidationSchema = z.object({
 
 export const academicFacultyValidations = {
   createAcademicFacultyValidationSchema,
-  UpdateAcademicFacultyValidationSchema,
+  updateAcademicFacultyValidationSchema,
 };

@@ -18,7 +18,7 @@ const createAcademicDepartmentValidationSchema = zod_1.z.object({
     }),
 });
 // update Student Zod Schema
-const UpdateAcademicDepartmentValidationSchema = zod_1.z.object({
+const updateAcademicDepartmentValidationSchema = zod_1.z.object({
     body: zod_1.z.object({
         name: zod_1.z
             .string({
@@ -38,5 +38,5 @@ const UpdateAcademicDepartmentValidationSchema = zod_1.z.object({
 });
 exports.academicDepartmentValidations = {
     createAcademicDepartmentValidationSchema,
-    UpdateAcademicDepartmentValidationSchema,
+    updateAcademicDepartmentValidationSchema,
 };

@@ -17,7 +17,7 @@ const createAcademicDepartmentValidationSchema = z.object({
 });
 
 // update Student Zod Schema
-const UpdateAcademicDepartmentValidationSchema = z.object({
+const updateAcademicDepartmentValidationSchema = z.object({
   body: z.object({
     name: z
       .string({
@@ -38,5 +38,5 @@ const UpdateAcademicDepartmentValidationSchema = z.object({
 
 export const academicDepartmentValidations = {
   createAcademicDepartmentValidationSchema,
-  UpdateAcademicDepartmentValidationSchema,
+  updateAcademicDepartmentValidationSchema,
 };

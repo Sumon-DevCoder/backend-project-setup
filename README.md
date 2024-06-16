@@ -40,3 +40,5 @@ Install the necessary packages for the project.
 npm install express mongoose nodemon dotenv cors
 npm install -D typescript
 ```
+
+https://backend-project-setup.vercel.app/

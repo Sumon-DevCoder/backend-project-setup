@@ -1,7 +1,7 @@
 import AppError from "../../error/AppError";
 import { academicSemesterNameCodeMapper } from "./academicSemester.constant";
 import { TAcademicSemester } from "./academicSemester.interface";
-import { academicSemesterModel } from "./academicSemester.model";
+import { AcademicSemester } from "./academicSemester.model";
 
 const createacademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   // relation between semesterName and semesterCode for checking
@@ -9,17 +9,17 @@ const createacademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   //   throw new AppError(400, "Invalid Semester Code");
   // }
 
-  const result = await academicSemesterModel.create(payload);
+  const result = await AcademicSemester.create(payload);
   return result;
 };
 
 const getAllAcademicSemesterFromDB = async () => {
-  const result = await academicSemesterModel.find();
+  const result = await AcademicSemester.find();
   return result;
 };
 
 const getSingleAcademicSemesterFromDB = async (id: string) => {
-  const result = await academicSemesterModel.findOne({ _id: id });
+  const result = await AcademicSemester.findOne({ _id: id });
   return result;
 };
 
@@ -35,13 +35,9 @@ const updateSingleAcademicSemesterIntoDB = async (
     throw new AppError(400, "Invalid Semester Code");
   }
 
-  const result = await academicSemesterModel.findOneAndUpdate(
-    { _id: id },
-    payload,
-    {
-      new: true,
-    }
-  );
+  const result = await AcademicSemester.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
   return result;
 };
 
