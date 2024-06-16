@@ -60,20 +60,11 @@ AcademicSemesterSchema.pre("save", function (next) {
 AcademicSemesterSchema.pre("findOne", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = this.getQuery();
-        console.log(query);
+        const isSemesterIdExists = yield exports.AcademicSemester.find(query);
+        if (isSemesterIdExists.length === 0) {
+            throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Semester does not exists!");
+        }
         next();
     });
 });
-// // in update time isIdExist checking
-// academicDepartmentSchema.pre("findOneAndUpdate", async function (next) {
-//   const query = this.getQuery();
-//   const isDepartmentExists = await AcademicDepartment.findOne(query);
-//   if (!isDepartmentExists) {
-//     throw new AppError(
-//       httpStatus.NOT_FOUND,
-//       "This Department does not exists!"
-//     );
-//   }
-//   next();
-// });
 exports.AcademicSemester = (0, mongoose_1.model)("AcademicSemester", AcademicSemesterSchema);

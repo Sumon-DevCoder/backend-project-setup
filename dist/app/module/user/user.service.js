@@ -30,9 +30,11 @@ const createStudentDB = (password, payload) => __awaiter(void 0, void 0, void 0,
     userData.role = "student";
     // find academic semester info
     const admissionSemester = yield academicSemester_model_1.AcademicSemester.findById(payload.admissionSemester);
+    if (!admissionSemester) {
+        throw new AppError_1.default(404, "admissionSemester not found");
+    }
     // set mannually generate id
     userData.id = yield (0, user_utils_1.generateStudentId)(admissionSemester);
-    console.log("admissionSemester infoooo", admissionSemester);
     // session
     const session = yield mongoose_1.default.startSession();
     try {
@@ -45,7 +47,7 @@ const createStudentDB = (password, payload) => __awaiter(void 0, void 0, void 0,
         }
         else {
             payload.id = newUser[0].id; // embedded id
-            payload.user = newUser[0]._id; // reference ids
+            payload.user = newUser[0]._id; // reference id
         }
         // create a student (transction - 2)
         const newStudent = yield student_model_1.Student.create([payload], { session });
@@ -62,21 +64,16 @@ const createStudentDB = (password, payload) => __awaiter(void 0, void 0, void 0,
         throw new Error(err);
     }
 });
-const deleteUserFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_model_1.User.updateOne({ id }, { isDeleted: true });
-    return result;
-});
 const getAllUsersFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.User.find();
     return result;
 });
 const getSingleUsersFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_model_1.User.aggregate([{ $match: { id: id } }]);
+    const result = yield user_model_1.User.findOne({ _id: id });
     return result;
 });
 exports.UserServices = {
     createStudentDB,
-    deleteUserFromDB,
     getAllUsersFromDB,
     getSingleUsersFromDB,
 };

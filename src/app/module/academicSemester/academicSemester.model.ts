@@ -55,25 +55,14 @@ AcademicSemesterSchema.pre("save", async function (next) {
 AcademicSemesterSchema.pre("findOne", async function (next) {
   const query = this.getQuery();
 
-  console.log(query);
+  const isSemesterIdExists = await AcademicSemester.find(query);
+
+  if (isSemesterIdExists.length === 0) {
+    throw new AppError(httpStatus.NOT_FOUND, "Semester does not exists!");
+  }
+
   next();
 });
-
-// // in update time isIdExist checking
-// academicDepartmentSchema.pre("findOneAndUpdate", async function (next) {
-//   const query = this.getQuery();
-
-//   const isDepartmentExists = await AcademicDepartment.findOne(query);
-
-//   if (!isDepartmentExists) {
-//     throw new AppError(
-//       httpStatus.NOT_FOUND,
-//       "This Department does not exists!"
-//     );
-//   }
-
-//   next();
-// });
 
 export const AcademicSemester = model<TAcademicSemester>(
   "AcademicSemester",

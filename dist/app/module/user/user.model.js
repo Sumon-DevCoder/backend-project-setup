@@ -51,8 +51,12 @@ const userSchema = new mongoose_1.Schema({
         enum: ["admin", "student", "faculty"],
         required: true,
     },
-    status: { type: String, enum: ["in-progress", "blocked"], required: true },
-    isDeleted: { type: Boolean, required: true },
+    status: {
+        type: String,
+        enum: ["in-progress", "blocked"],
+        default: "in-progress",
+    },
+    isDeleted: { type: Boolean, default: false },
 }, { timestamps: true });
 // pre save middleware / hooks --> we will create() and save()
 userSchema.pre("save", function (next) {
@@ -65,7 +69,6 @@ userSchema.pre("save", function (next) {
 // post save middleware / hooks
 userSchema.post("save", function (doc, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        // console.log(this, "post hook - we save our data");
         doc.password = "";
         next();
     });
@@ -89,6 +92,15 @@ userSchema.pre("findOneAndUpdate", function (next) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User does not exists!");
         }
         next();
+    });
+});
+userSchema.pre("findOne", function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const query = this.getQuery();
+        const isExistsUser = yield exports.User.find(query);
+        if (!isExistsUser.length) {
+            throw new AppError_1.default(http_status_1.default.NOT_FOUND, "user not found!");
+        }
     });
 });
 // Create the Mongoose model

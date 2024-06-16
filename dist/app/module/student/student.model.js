@@ -96,7 +96,7 @@ const StudentSchema = new mongoose_1.Schema({
         ref: "AcademicDepartment", // reference
     },
     isDeleted: { type: Boolean, required: true, default: false },
-    isActive: { type: String, enum: ["active", "blocked"], required: true },
+    isActive: { type: String, enum: ["active", "blocked"], default: "active" },
 }, {
     toJSON: {
         virtuals: true,

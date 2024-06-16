@@ -16,8 +16,12 @@ const userSchema = new Schema<TUser>(
       enum: ["admin", "student", "faculty"],
       required: true,
     },
-    status: { type: String, enum: ["in-progress", "blocked"], required: true },
-    isDeleted: { type: Boolean, required: true },
+    status: {
+      type: String,
+      enum: ["in-progress", "blocked"],
+      default: "in-progress",
+    },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -34,7 +38,6 @@ userSchema.pre("save", async function (next) {
 
 // post save middleware / hooks
 userSchema.post("save", async function (doc, next) {
-  // console.log(this, "post hook - we save our data");
   doc.password = "";
   next();
 });
@@ -63,6 +66,15 @@ userSchema.pre("findOneAndUpdate", async function (next) {
   }
 
   next();
+});
+
+userSchema.pre("findOne", async function (next) {
+  const query = this.getQuery();
+  const isExistsUser = await User.find(query);
+
+  if (!isExistsUser.length) {
+    throw new AppError(httpStatus.NOT_FOUND, "user not found!");
+  }
 });
 
 // Create the Mongoose model

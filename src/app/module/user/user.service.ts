@@ -25,10 +25,12 @@ const createStudentDB = async (password: string, payload: TStudent) => {
     payload.admissionSemester
   );
 
-  // set mannually generate id
-  userData.id = await generateStudentId(admissionSemester as TAcademicSemester);
+  if (!admissionSemester) {
+    throw new AppError(404, "admissionSemester not found");
+  }
 
-  console.log("admissionSemester infoooo", admissionSemester);
+  // set mannually generate id
+  userData.id = await generateStudentId(admissionSemester);
 
   // session
   const session = await mongoose.startSession();
@@ -44,7 +46,7 @@ const createStudentDB = async (password: string, payload: TStudent) => {
       throw new AppError(httpStatus.BAD_REQUEST, "Failed to create user");
     } else {
       payload.id = newUser[0].id; // embedded id
-      payload.user = newUser[0]._id; // reference ids
+      payload.user = newUser[0]._id; // reference id
     }
 
     // create a student (transction - 2)
@@ -65,24 +67,18 @@ const createStudentDB = async (password: string, payload: TStudent) => {
   }
 };
 
-const deleteUserFromDB = async (id: string) => {
-  const result = await User.updateOne({ id }, { isDeleted: true });
-  return result;
-};
-
 const getAllUsersFromDB = async () => {
   const result = await User.find();
   return result;
 };
 
 const getSingleUsersFromDB = async (id: string) => {
-  const result = await User.aggregate([{ $match: { id: id } }]);
+  const result = await User.findOne({ _id: id });
   return result;
 };
 
 export const UserServices = {
   createStudentDB,
-  deleteUserFromDB,
   getAllUsersFromDB,
   getSingleUsersFromDB,
 };

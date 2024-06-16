@@ -12,5 +12,4 @@ const router = express_1.default.Router();
 router.post("/create-student", (0, validateRequest_1.default)(student_validation_1.studentValidation.createStudentValidationSchema), user_controller_1.UserControllers.createStudent);
 router.get("/", user_controller_1.UserControllers.getAllUser);
 router.get("/:id", user_controller_1.UserControllers.getSingleUser);
-router.delete("/:userId", user_controller_1.UserControllers.deleteUser);
 exports.UserRoutes = router;

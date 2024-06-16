@@ -37,7 +37,7 @@ const GuardianSchema = new Schema<TGuardian>({
   fatherContactNo: { type: String, required: true },
   motherName: { type: String, required: true },
   motherOccupation: { type: String, required: true },
-  motherContactNo: { type: String, required: true },
+  motherContactNo: { type: String, required: true }, 
 });
 
 const LocalGuardianSchema = new Schema<TLocalGuardian>({
@@ -80,7 +80,7 @@ const StudentSchema = new Schema<TStudent, StudentModel>(
     guardian: { type: GuardianSchema, required: true },
     localGuardian: { type: LocalGuardianSchema, required: true },
     profileImage: { type: String, required: true },
-    admissionSemester: {
+    admissionSemester: { 
       type: Schema.Types.ObjectId,
       required: [true, "admission Semester id is required"],
       ref: "AcademicSemester", // reference
@@ -93,7 +93,7 @@ const StudentSchema = new Schema<TStudent, StudentModel>(
       ref: "AcademicDepartment", // reference
     },
     isDeleted: { type: Boolean, required: true, default: false },
-    isActive: { type: String, enum: ["active", "blocked"], required: true },
+    isActive: { type: String, enum: ["active", "blocked"], default: "active" },
   },
   {
     toJSON: {

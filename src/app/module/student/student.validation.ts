@@ -41,29 +41,33 @@ const localGuardianValidationSchema = z.object({
 const createStudentValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20).optional(),
-    name: userNameValidationSchema,
-    gender: z.enum(["Male", "Female", "Other"], {
-      message: "Gender must be Male, Female, or Other",
-    }),
-    dateOfBirth: z.date({ message: "Date of birth is required" }),
-    email: z.string().refine((value) => validator.isEmail(value), {
-      message: "Invalid email address",
-    }),
-    contactNo: z.string().min(1),
-    emergencyContactNo: z.string().min(1),
-    bloodGroup: z
-      .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
-      .optional(),
-    presentAddress: z.string().min(1),
-    permanentAddress: z.string().min(1),
-    guardian: guardianValidationSchema,
-    localGuardian: localGuardianValidationSchema,
-    profileImage: z.string(),
-    admissionSemester: z.string().min(1), // ObjectId reference to an AcademicSemester document
-    academicDepartment: z.string(), // ObjectId reference to an academicDepartment document
-    isDeleted: z.boolean().default(false),
-    isActive: z.enum(["active", "blocked"], {
-      message: "Status must be active or blocked",
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(["Male", "Female", "Other"], {
+        message: "Gender must be Male, Female, or Other",
+      }),
+      dateOfBirth: z
+        .string()
+        .datetime({ message: "Date of birth is required" }),
+      email: z.string().refine((value) => validator.isEmail(value), {
+        message: "Invalid email address",
+      }),
+      contactNo: z.string().min(1),
+      emergencyContactNo: z.string().min(1),
+      bloodGroup: z
+        .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
+        .optional(),
+      presentAddress: z.string().min(1),
+      permanentAddress: z.string().min(1),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      profileImage: z.string(),
+      admissionSemester: z.string().min(1), // ObjectId reference to an AcademicSemester document
+      academicDepartment: z.string(), // ObjectId reference to an academicDepartment document
+      isDeleted: z.boolean().default(false),
+      isActive: z.enum(["active", "blocked"], {
+        message: "Status must be active or blocked",
+      }),
     }),
   }),
 });
