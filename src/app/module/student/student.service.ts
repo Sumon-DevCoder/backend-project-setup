@@ -7,6 +7,7 @@ import { User } from "../user/user.model";
 
 const getAllStudentFromDB = async () => {
   const result = await Student.find()
+    .populate("user")
     .populate("admissionSemester")
     .populate({
       path: "academicDepartment",
@@ -19,6 +20,7 @@ const getAllStudentFromDB = async () => {
 
 const getSingleStudentFromDB = async (id: string) => {
   const result = await Student.findOne({ _id: id })
+    .populate("user")
     .populate("admissionSemester")
     .populate({
       path: "academicDepartment",
@@ -61,10 +63,14 @@ const updateSingleStudentFromDB = async (
     }
   }
 
-  const result = await Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
-    new: true,
-    runValidators: true,
-  });
+  const result = await Student.findOneAndUpdate(
+    { _id: id },
+    modifiedUpdatedData,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
   return result;
 };
 

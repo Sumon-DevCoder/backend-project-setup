@@ -31,6 +31,7 @@ const AppError_1 = __importDefault(require("../../error/AppError"));
 const user_model_1 = require("../user/user.model");
 const getAllStudentFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield student_model_1.Student.find()
+        .populate("user")
         .populate("admissionSemester")
         .populate({
         path: "academicDepartment",
@@ -42,6 +43,7 @@ const getAllStudentFromDB = () => __awaiter(void 0, void 0, void 0, function* ()
 });
 const getSingleStudentFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield student_model_1.Student.findOne({ _id: id })
+        .populate("user")
         .populate("admissionSemester")
         .populate({
         path: "academicDepartment",
@@ -73,7 +75,7 @@ const updateSingleStudentFromDB = (id, payload) => __awaiter(void 0, void 0, voi
             modifiedUpdatedData[`localGuardian.${key}`] = value;
         }
     }
-    const result = yield student_model_1.Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
+    const result = yield student_model_1.Student.findOneAndUpdate({ _id: id }, modifiedUpdatedData, {
         new: true,
         runValidators: true,
     });

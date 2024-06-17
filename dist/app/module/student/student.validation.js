@@ -74,37 +74,39 @@ const createStudentValidationSchema = zod_1.z.object({
 const updateStudentValidationSchema = zod_1.z.object({
     body: zod_1.z.object({
         password: zod_1.z.string().max(20).optional(),
-        name: userNameValidationSchema.partial(),
-        gender: zod_1.z
-            .enum(["Male", "Female", "Other"], {
-            message: "Gender must be Male, Female, or Other",
-        })
-            .optional(),
-        dateOfBirth: zod_1.z.date({ message: "Date of birth is required" }).optional(),
-        email: zod_1.z
-            .string()
-            .refine((value) => validator_1.default.isEmail(value), {
-            message: "Invalid email address",
-        })
-            .optional(),
-        contactNo: zod_1.z.string().min(1).optional(),
-        emergencyContactNo: zod_1.z.string().min(1).optional(),
-        bloodGroup: zod_1.z
-            .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
-            .optional(),
-        presentAddress: zod_1.z.string().min(1).optional(),
-        permanentAddress: zod_1.z.string().min(1).optional(),
-        guardian: guardianValidationSchema.partial(),
-        localGuardian: localGuardianValidationSchema.partial(),
-        profileImage: zod_1.z.string().optional(),
-        admissionSemester: zod_1.z.string().min(1).optional(), // ObjectId reference to an AcademicSemester document
-        academicDepartment: zod_1.z.string().optional(), // ObjectId reference to an academicDepartment document
-        isDeleted: zod_1.z.boolean().default(false).optional(),
-        isActive: zod_1.z
-            .enum(["active", "blocked"], {
-            message: "Status must be active or blocked",
-        })
-            .optional(),
+        student: zod_1.z.object({
+            name: userNameValidationSchema.partial(),
+            gender: zod_1.z
+                .enum(["Male", "Female", "Other"], {
+                message: "Gender must be Male, Female, or Other",
+            })
+                .optional(),
+            dateOfBirth: zod_1.z.date({ message: "Date of birth is required" }).optional(),
+            email: zod_1.z
+                .string()
+                .refine((value) => validator_1.default.isEmail(value), {
+                message: "Invalid email address",
+            })
+                .optional(),
+            contactNo: zod_1.z.string().min(1).optional(),
+            emergencyContactNo: zod_1.z.string().min(1).optional(),
+            bloodGroup: zod_1.z
+                .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
+                .optional(),
+            presentAddress: zod_1.z.string().min(1).optional(),
+            permanentAddress: zod_1.z.string().min(1).optional(),
+            guardian: guardianValidationSchema.optional(),
+            localGuardian: localGuardianValidationSchema.optional(),
+            profileImage: zod_1.z.string().optional(),
+            admissionSemester: zod_1.z.string().min(1).optional(), // ObjectId reference to an AcademicSemester document
+            academicDepartment: zod_1.z.string().optional(), // ObjectId reference to an academicDepartment document
+            isDeleted: zod_1.z.boolean().default(false).optional(),
+            isActive: zod_1.z
+                .enum(["active", "blocked"], {
+                message: "Status must be active or blocked",
+            })
+                .optional(),
+        }),
     }),
 });
 exports.studentValidation = {

@@ -10,6 +10,7 @@ This project is a Node.js backend application set up with TypeScript, Express, M
 │   ├── app
 │   │   ├── config
 │   │   ├── error
+│   │   ├── interface
 │   │   ├── middlewares
 │   │   ├── module
 │   │   ├── routes
