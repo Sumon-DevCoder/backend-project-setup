@@ -1,48 +1,50 @@
-import { UserServices } from "./user.service";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
+import { UserServices } from "./user.service";
+import { Request, Response } from "express";
 
-const createStudent = catchAsync(async (req, res) => {
-  console.log("hitting", req.body);
-
-  const { password, student: studentData } = req.body;
-
-  const result = await UserServices.createStudentDB(password, studentData);
+// create
+const createAdmin = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.creatAdminIntoDB(req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Student is created successfully",
+    message: "Admin created successfully",
     data: result,
   });
 });
 
-const getAllUser = catchAsync(async (req, res) => {
-  const result = await UserServices.getAllUsersFromDB();
+// get all
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getAllUsersFromDB(req.query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Data fetch successfully",
+    message: "Admin Data fetched successfully",
     data: result,
   });
 });
 
-const getSingleUser = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const result = await UserServices.getSingleUsersFromDB(id);
+// update
+const updateUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.updateUserIntoDB(
+    req.params.userId,
+    req.body
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Single Data fetch successfully",
+    message: "User updated successfully",
     data: result,
   });
 });
 
 export const UserControllers = {
-  createStudent,
-  getAllUser,
-  getSingleUser,
+  createAdmin,
+  getAllUsers,
+  updateUser,
 };

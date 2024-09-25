@@ -1,33 +1,55 @@
 import { z } from "zod";
+import { USER_Role, USER_STATUS } from "./user.constant";
 
-const createUserValidationSchema = z.object({
+export const createUserValidationSchema = z.object({
   body: z.object({
-    password: z
-      .string()
-      .min(6, "Password must have 6 characters")
-      .max(20, "Password can not be more than 20 characters"),
-    needsPasswordChange: z.boolean().optional().default(true),
-    role: z.enum(["admin", "student", "faculty"]),
-    status: z.enum(["in-progress", "blocked"]),
-    isDeleted: z.boolean(),
-  }),
-});
-
-const updateValidationSchema = z.object({
-  body: z.object({
-    password: z
-      .string()
-      .min(6, "Password must have 6 characters")
-      .max(20, "Password cannot be more than 20 characters")
+    name: z.string().min(1, "name is required").trim(),
+    role: z
+      .enum([USER_Role.ADMIN, USER_Role.SUPER_ADMIN, USER_Role.USER], {
+        required_error: "role is required",
+      })
       .optional(),
-    needsPasswordChange: z.boolean().optional(),
-    role: z.enum(["admin", "student", "faculty"]).optional(),
-    status: z.enum(["in-progress", "blocked"]).optional(),
-    isDeleted: z.boolean().optional(),
+    email: z
+      .string()
+      .email("Invalid email address")
+      .min(1, "email is required")
+      .trim(),
+    password: z
+      .string()
+      .min(6, "password must be at least 6 characters")
+      .min(1, "password is required"),
+    status: z
+      .enum([USER_STATUS.ACTIVE, USER_STATUS.BLOCKED], {
+        required_error: "status is required",
+      })
+      .optional(), // Default status, so it's optional
   }),
 });
 
-export const userValidationSchema = {
+export const updateUserValidationSchema = z.object({
+  body: z
+    .object({
+      name: z.string().trim().optional(), // Optional for updates
+      role: z
+        .enum([USER_Role.ADMIN, USER_Role.SUPER_ADMIN, USER_Role.USER], {
+          required_error: "role is required",
+        })
+        .optional(), // Optional for updates
+      email: z.string().email("Invalid email address").trim().optional(), // Optional for updates
+      password: z
+        .string()
+        .min(6, "password must be at least 6 characters")
+        .optional(), // Optional for updates
+      status: z
+        .enum([USER_STATUS.ACTIVE, USER_STATUS.BLOCKED], {
+          required_error: "status is required",
+        })
+        .optional(), // Optional for updates
+    })
+    .partial(), // Makes all fields optional automatically
+});
+
+export const userSchemaValidation = {
   createUserValidationSchema,
-  updateValidationSchema,
+  updateUserValidationSchema,
 };

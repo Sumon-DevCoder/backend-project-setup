@@ -1,17 +1,41 @@
-import express, { NextFunction, Request, Response } from "express";
+import { Router } from "express";
+import validateRequest from "../../middlewares/validateRequest";
+import { userSchemaValidation } from "./user.validation";
 import { UserControllers } from "./user.controller";
-import validationRequest from "../../middleware/validateRequest";
-import { studentValidation } from "../student/student.validation";
+import { USER_Role } from "./user.constant";
+import { auth } from "../../middlewares/auth";
 
-const router = express.Router();
+const router = Router();
 
+// create admin
 router.post(
-  "/create-student",
-  validationRequest(studentValidation.createStudentValidationSchema),
-  UserControllers.createStudent
+  "/create-admin",
+  validateRequest(userSchemaValidation.createUserValidationSchema),
+  auth(USER_Role.ADMIN, USER_Role.SUPER_ADMIN),
+  UserControllers.createAdmin
 );
-router.get("/", UserControllers.getAllUser);
 
-router.get("/:id", UserControllers.getSingleUser);
+// get all admin
+router.get(
+  "/",
+  auth(USER_Role.ADMIN, USER_Role.SUPER_ADMIN),
+  UserControllers.getAllUsers
+);
+
+// update user
+router.put(
+  "/:userId",
+  validateRequest(userSchemaValidation.updateUserValidationSchema),
+  auth(USER_Role.ADMIN, USER_Role.SUPER_ADMIN),
+  UserControllers.updateUser
+);
+
+// update only user own profile
+router.put(
+  "/me",
+  validateRequest(userSchemaValidation.updateUserValidationSchema),
+  auth(USER_Role.ADMIN, USER_Role.SUPER_ADMIN, USER_Role.USER),
+  UserControllers.updateUser
+);
 
 export const UserRoutes = router;

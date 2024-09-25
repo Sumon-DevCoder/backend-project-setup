@@ -1,81 +1,62 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import mongoose, { Schema } from "mongoose";
 import { TUser } from "./user.interface";
+import { USER_Role, USER_STATUS } from "./user.constant";
 import bcrypt from "bcrypt";
 import config from "../../config";
-import AppError from "../../error/AppError";
-import httpStatus from "http-status";
 
-// Define the Mongoose schema
-const userSchema = new Schema<TUser>(
+const UserSchema: Schema = new Schema<TUser>(
   {
-    id: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    needsPasswordChange: { type: Boolean, default: true },
+    name: {
+      type: String,
+      required: [true, "name is required"],
+      trim: true,
+    },
     role: {
       type: String,
-      enum: ["admin", "student", "faculty"],
-      required: true,
+      enum: Object.values(USER_Role),
+      required: [true, "role is required"],
+    },
+    email: {
+      type: String,
+      required: [true, "email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, "password is required"],
+      select: 0,
     },
     status: {
       type: String,
-      enum: ["in-progress", "blocked"],
-      default: "in-progress",
+      enum: Object.values(USER_STATUS), // Using values from USER_STATUS constant
+      default: USER_STATUS.ACTIVE, // Assuming 'active' as default status
     },
-    isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  {
+    timestamps: true, // Automatically manage createdAt and updatedAt fields
+  }
 );
 
-// pre save middleware / hooks --> we will create() and save()
-userSchema.pre("save", async function (next) {
+// setup password hashing
+UserSchema.pre("save", async function (next) {
   const user = this;
+
   user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bycrypt_salt_round)
+    user.password as string,
+    Number(config.bcrypt_salt_rounds)
   );
+
   next();
 });
 
-// post save middleware / hooks
-userSchema.post("save", async function (doc, next) {
+UserSchema.post("save", async function (doc, next) {
   doc.password = "";
-  next();
-});
-
-// query middleware --> using find
-userSchema.pre("find", function (next) {
-  this.find({ isDeleted: { $ne: true } });
-  next();
-});
-
-// query middleware --> using pipeline
-userSchema.pre("aggregate", function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
 
   next();
 });
 
-// in delete time existingUser checking
-userSchema.pre("findOneAndUpdate", async function (next) {
-  const query = this.getQuery();
-
-  const existingUser = await User.findOne(query);
-
-  if (!existingUser) {
-    throw new AppError(httpStatus.NOT_FOUND, "User does not exists!");
-  }
-
-  next();
-});
-
-userSchema.pre("findOne", async function (next) {
-  const query = this.getQuery();
-  const isExistsUser = await User.find(query);
-
-  if (!isExistsUser.length) {
-    throw new AppError(httpStatus.NOT_FOUND, "user not found!");
-  }
-});
-
-// Create the Mongoose model
-export const User = mongoose.model<TUser>("User", userSchema);
+const User = mongoose.model<TUser>("User", UserSchema);
+export default User;

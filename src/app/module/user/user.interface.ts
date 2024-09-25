@@ -1,8 +1,9 @@
-export interface TUser {
-  id: string;
+import { USER_Role, USER_STATUS } from "./user.constant";
+
+export type TUser = {
+  name: string;
+  role: keyof typeof USER_Role;
+  email: string;
   password: string;
-  needsPasswordChange: boolean;
-  role: "admin" | "student" | "faculty";
-  status: "in-progress" | "blocked";
-  isDeleted: boolean;
-}
+  status: keyof typeof USER_STATUS;
+};
