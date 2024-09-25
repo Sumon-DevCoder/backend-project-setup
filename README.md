@@ -1,5 +1,7 @@
 # Backend Project
 
+[ReadMe](https://docs.google.com/document/d/1mIMnBcvGjUqW2FluxH4CF1AOsBHk_g3qL4LKgI4cB_U/edit?usp=sharing)
+
 This project is a Node.js backend application set up with TypeScript, Express, MongoDB (using Mongoose), and other essential tools for development and code quality.
 
 ## Project Structure
