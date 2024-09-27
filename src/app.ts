@@ -2,8 +2,8 @@ import express from "express";
 const app = express();
 import cors from "cors";
 import router from "./app/routes";
-import notFound from "./app/middleware/notFound";
-import golbalErrorHandler from "./app/middleware/globalErrorHandler";
+import notFound from "./app/middlewares/notFound";
+import globalErrorHandler from "./app/middlewares/globalErrorhandler";
 
 // parser
 app.use(cors());
@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 });
 
 // global error handler
-app.use(golbalErrorHandler);
+app.use(globalErrorHandler);
 // route not found
 app.use(notFound);
 

@@ -14,66 +14,54 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
-const config_1 = __importDefault(require("../../config"));
-const student_model_1 = require("../student/student.model");
-const mongoose_1 = __importDefault(require("mongoose"));
-const user_model_1 = require("./user.model");
-const academicSemester_model_1 = require("../academicSemester/academicSemester.model");
+const user_model_1 = __importDefault(require("./user.model"));
 const AppError_1 = __importDefault(require("../../error/AppError"));
-const user_utils_1 = require("./user.utils");
-const createStudentDB = (password, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    // create a user object
-    const userData = {};
-    // if password not given use default password
-    userData.password = password || config_1.default.default_password;
-    // set student role
-    userData.role = "student";
-    // find academic semester info
-    const admissionSemester = yield academicSemester_model_1.AcademicSemester.findById(payload.admissionSemester);
-    if (!admissionSemester) {
-        throw new AppError_1.default(404, "admissionSemester not found");
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const user_constant_1 = require("./user.constant");
+// create
+const creatAdminIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    // user checking
+    const isUserExists = yield user_model_1.default.findOne({ email: payload.email });
+    if (isUserExists) {
+        throw new AppError_1.default(http_status_1.default.CONFLICT, "Already registered");
     }
-    // set mannually generate id
-    userData.id = yield (0, user_utils_1.generateStudentId)(admissionSemester);
-    // session
-    const session = yield mongoose_1.default.startSession();
-    try {
-        session.startTransaction();
-        // create a user (transction - 1)
-        const newUser = yield user_model_1.User.create([userData], { session });
-        // create a student
-        if (!newUser.length) {
-            throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Failed to create user");
-        }
-        else {
-            payload.id = newUser[0].id; // embedded id
-            payload.user = newUser[0]._id; // reference id
-        }
-        // create a student (transction - 2)
-        const newStudent = yield student_model_1.Student.create([payload], { session });
-        if (!newStudent.length) {
-            throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Failed to create student");
-        }
-        yield session.commitTransaction(); // for save database permanently
-        yield session.endSession(); // end session
-        return newStudent;
-    }
-    catch (err) {
-        yield session.abortTransaction();
-        yield session.endSession();
-        throw new Error(err);
-    }
-});
-const getAllUsersFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_model_1.User.find();
+    const result = yield user_model_1.default.create(payload);
     return result;
 });
-const getSingleUsersFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_model_1.User.findOne({ _id: id });
+// get all
+const getAllUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    // queryBuilder
+    const userQuery = new QueryBuilder_1.default(user_model_1.default.find(), query)
+        .search(user_constant_1.userSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    const meta = yield userQuery.countTotal();
+    const result = yield userQuery.modelQuery;
+    // checking data
+    if (result.length === 0) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "data not found!");
+    }
+    return {
+        meta,
+        result,
+    };
+});
+// update
+const updateUserIntoDB = (_id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    // user checking
+    const isUserExists = yield user_model_1.default.findOne({ _id });
+    if (!isUserExists) {
+        throw new AppError_1.default(http_status_1.default.CONFLICT, "User not found!");
+    }
+    const result = yield user_model_1.default.findByIdAndUpdate({ _id }, payload, {
+        new: true,
+    });
     return result;
 });
 exports.UserServices = {
-    createStudentDB,
+    creatAdminIntoDB,
+    updateUserIntoDB,
     getAllUsersFromDB,
-    getSingleUsersFromDB,
 };

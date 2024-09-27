@@ -35,73 +35,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+/* eslint-disable @typescript-eslint/no-this-alias */
 const mongoose_1 = __importStar(require("mongoose"));
+const user_constant_1 = require("./user.constant");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../config"));
-const AppError_1 = __importDefault(require("../../error/AppError"));
-const http_status_1 = __importDefault(require("http-status"));
-// Define the Mongoose schema
-const userSchema = new mongoose_1.Schema({
-    id: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    needsPasswordChange: { type: Boolean, default: true },
+const UserSchema = new mongoose_1.Schema({
+    name: {
+        type: String,
+        required: [true, "name is required"],
+        trim: true,
+    },
     role: {
         type: String,
-        enum: ["admin", "student", "faculty"],
-        required: true,
+        enum: Object.values(user_constant_1.USER_Role),
+        required: [true, "role is required"],
+    },
+    email: {
+        type: String,
+        required: [true, "email is required"],
+        unique: true,
+        lowercase: true,
+        trim: true,
+    },
+    password: {
+        type: String,
+        required: [true, "password is required"],
+        select: 0,
     },
     status: {
         type: String,
-        enum: ["in-progress", "blocked"],
-        default: "in-progress",
+        enum: Object.values(user_constant_1.USER_STATUS), // Using values from USER_STATUS constant
+        default: user_constant_1.USER_STATUS.ACTIVE, // Assuming 'active' as default status
     },
-    isDeleted: { type: Boolean, default: false },
-}, { timestamps: true });
-// pre save middleware / hooks --> we will create() and save()
-userSchema.pre("save", function (next) {
+}, {
+    timestamps: true, // Automatically manage createdAt and updatedAt fields
+});
+// setup password hashing
+UserSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = this;
-        user.password = yield bcrypt_1.default.hash(user.password, Number(config_1.default.bycrypt_salt_round));
+        user.password = yield bcrypt_1.default.hash(user.password, Number(config_1.default.bcrypt_salt_rounds));
         next();
     });
 });
-// post save middleware / hooks
-userSchema.post("save", function (doc, next) {
+UserSchema.post("save", function (doc, next) {
     return __awaiter(this, void 0, void 0, function* () {
         doc.password = "";
         next();
     });
 });
-// query middleware --> using find
-userSchema.pre("find", function (next) {
-    this.find({ isDeleted: { $ne: true } });
-    next();
-});
-// query middleware --> using pipeline
-userSchema.pre("aggregate", function (next) {
-    this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-    next();
-});
-// in delete time existingUser checking
-userSchema.pre("findOneAndUpdate", function (next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const query = this.getQuery();
-        const existingUser = yield exports.User.findOne(query);
-        if (!existingUser) {
-            throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User does not exists!");
-        }
-        next();
-    });
-});
-userSchema.pre("findOne", function (next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const query = this.getQuery();
-        const isExistsUser = yield exports.User.find(query);
-        if (!isExistsUser.length) {
-            throw new AppError_1.default(http_status_1.default.NOT_FOUND, "user not found!");
-        }
-    });
-});
-// Create the Mongoose model
-exports.User = mongoose_1.default.model("User", userSchema);
+const User = mongoose_1.default.model("User", UserSchema);
+exports.default = User;
